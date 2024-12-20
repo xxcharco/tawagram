@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/conditions', [ConditionController::class, 'index'])->name('conditions.index');
     Route::post('/conditions/store', [ConditionController::class, 'store'])->name('conditions.store');
+
+    Route::get('/conditions/history', [ConditionController::class, 'history'])->name('conditions.history');
+    Route::get('/conditions/graph', [ConditionController::class, 'graph'])->name('conditions.graph');
+    Route::get('/conditions/cycle', [ConditionController::class, 'cycle'])->name('conditions.cycle');
 });
 
 require __DIR__.'/auth.php';

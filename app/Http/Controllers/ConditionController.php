@@ -45,7 +45,8 @@ class ConditionController extends Controller
         $condition->recorded_date = now();
         $condition->save();
     
-        return redirect()->back()->with('message', '記録しました');
+        // 完了画面にリダイレクト
+        return Inertia::render('Conditions/Complete');
     }
 
     /**
