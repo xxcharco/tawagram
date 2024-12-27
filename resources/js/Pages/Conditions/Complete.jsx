@@ -54,7 +54,7 @@ export default function Complete({ message = '記録しました' }) {
                         グラフを見る
                     </Link>
                     <Link 
-                        href="/conditions/cycle" 
+                        href="/menstruation" 
                         className="block w-full p-4 bg-white rounded-lg shadow-sm text-center"
                     >
                         月経を記録

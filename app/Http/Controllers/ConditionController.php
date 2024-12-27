@@ -50,34 +50,68 @@ class ConditionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * グラフ表示とデータ一覧
      */
-    public function show(Condition $condition)
+    public function graph()
     {
-        //
+        $conditions = Condition::orderBy('recorded_date', 'desc')
+            ->get()
+            ->map(function ($condition) {
+                return [
+                    'id' => $condition->id,
+                    'date' => \Carbon\Carbon::parse($condition->recorded_date)->format('Y-m-d'),
+                    'is_high' => $condition->is_high,
+                    'condition' => $condition->condition,
+                ];
+            });
+
+        return Inertia::render('Conditions/Graph', [
+            'conditions' => $conditions
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * 編集フォームの表示
      */
     public function edit(Condition $condition)
     {
-        //
+        return Inertia::render('Conditions/Edit', [
+            'condition' => [
+                'id' => $condition->id,
+                'is_high' => $condition->is_high,
+                'recorded_date' => \Carbon\Carbon::parse($condition->recorded_date)->format('Y-m-d'),
+                'condition' => $condition->condition,
+            ]
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * データの更新処理
      */
     public function update(Request $request, Condition $condition)
     {
-        //
+        $validated = $request->validate([
+            'is_high' => 'required|boolean',
+            'condition' => 'required|in:良い,やや良い,やや悪い,悪い',
+        ]);
+
+        $condition->update($validated);
+
+        return redirect()->route('conditions.graph')
+            ->with('message', '更新しました');
     }
 
     /**
      * Remove the specified resource from storage.
      */
+    /**
+     * データの削除処理
+     */
     public function destroy(Condition $condition)
     {
-        //
+        $condition->delete();
+        
+        return redirect()->route('conditions.graph')
+            ->with('message', '削除しました');
     }
 }
