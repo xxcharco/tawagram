@@ -11,15 +11,20 @@ class MenstruationController extends Controller
         // indexメソッド：月経記録のTOP画面
         public function index()
         {
-            $latestRecord = Menstruation::latest()->first();
-            
-            return Inertia::render('Menstruation/Index', [
-                'latestRecord' => $latestRecord ? [
-                    'id' => $latestRecord->id,
-                    'start_date' => $latestRecord->start_date->format('Y年n月j日'),  // 日付フォーマットを指定
-                    'end_date' => $latestRecord->end_date ? $latestRecord->end_date->format('Y年n月j日') : null,
-                ] : null
-            ]);
+            $records = Menstruation::orderBy('start_date', 'desc')
+            ->take(3)
+            ->get()
+            ->map(function ($record) {
+                return [
+                    'id' => $record->id,
+                    'start_date' => $record->start_date->format('Y年n月j日'),
+                    'end_date' => $record->end_date ? $record->end_date->format('Y年n月j日') : null,
+                ];
+            });
+    
+        return Inertia::render('Menstruation/Index', [
+            'records' => $records
+        ]);
         }
     
         // createメソッド：新規記録画面

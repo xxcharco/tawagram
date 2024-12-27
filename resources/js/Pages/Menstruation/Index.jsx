@@ -1,6 +1,13 @@
 import { Link } from '@inertiajs/react';
+import { useState } from 'react'; 
 
-export default function Index({ latestRecord }) {
+export default function Index({ records }) {
+    // 表示中のタブを管理（0: 最近, 1: 1回前, 2: 2回前）
+    const [activeTab, setActiveTab] = useState(0);
+
+    // 現在のタブの記録を取得
+    const currentRecord = records[activeTab] || null;
+
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="max-w-2xl mx-auto pt-8 px-4">
@@ -13,39 +20,48 @@ export default function Index({ latestRecord }) {
                         href={route('menstruation.create')}
                         className="block w-full bg-gray-700 text-white p-4 rounded-lg mb-4 text-center"
                     >
-                        生理記録ボタン
+                        生理記録
                     </Link>
                     
-                    <div className="flex mb-4">
-                        <button className="flex-1 py-2 border-b-2 border-black">
-                            最近
+                {/* タブ切り替え */}
+                <div className="flex mb-4">
+                    {['最近', '1回前', '2回前'].map((label, index) => (
+                        <button
+                            key={label}
+                            onClick={() => setActiveTab(index)}
+                            className={`flex-1 py-2 ${
+                                activeTab === index 
+                                ? 'border-b-2 border-black font-medium' 
+                                : 'text-gray-500'
+                            }`}
+                        >
+                            {label}
                         </button>
-                        <button className="flex-1 py-2">
-                            1回前
-                        </button>
-                    </div>
+                    ))}
+                </div>
 
-                    <div className="space-y-4">
-                        <div>
-                            <div className="flex items-center mb-1">
-                                <span className="text-yellow-500 mr-2">●</span>
-                                <span>生理開始日</span>
-                            </div>
-                            <div className="text-center py-2 bg-gray-50 rounded">
-                                {latestRecord?.start_date || '—記録なし—'}
-                            </div>
+                {/* 記録の表示 */}
+                <div className="space-y-4">
+                    <div>
+                        <div className="flex items-center mb-1">
+                            <span className="text-yellow-500 mr-2">●</span>
+                            <span>生理開始日</span>
                         </div>
-                        
-                        <div>
-                            <div className="flex items-center mb-1">
-                                <span className="text-yellow-500 mr-2">●</span>
-                                <span>生理終了日</span>
-                            </div>
-                            <div className="text-center py-2 bg-gray-50 rounded">
-                                {latestRecord?.end_date || '—記録なし—'}
-                            </div>
+                        <div className="text-center py-2 bg-gray-50 rounded">
+                            {currentRecord?.start_date || '—記録なし—'}
                         </div>
                     </div>
+                    
+                    <div>
+                        <div className="flex items-center mb-1">
+                            <span className="text-yellow-500 mr-2">●</span>
+                            <span>生理終了日</span>
+                        </div>
+                        <div className="text-center py-2 bg-gray-50 rounded">
+                            {currentRecord?.end_date || '—記録なし—'}
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 {/* なかよしログセクション */}
