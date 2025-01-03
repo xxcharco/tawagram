@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\ConditionController; 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MenstruationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\MenstruationController; 
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
      // プロフィール関連
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profzile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // 体調記録の基本機能
     Route::get('/conditions', [ConditionController::class, 'index'])->name('conditions.index');
