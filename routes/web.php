@@ -3,10 +3,12 @@
 use App\Http\Controllers\ConditionController; 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MenstruationController;
+use App\Http\Controllers\LineLoginController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Welcomeページ
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -16,12 +18,17 @@ Route::get('/', function () {
     ]);
 });
 
+// LINEログイン関連のルート
+Route::get('/linelogin', [LineLoginController::class, 'lineLogin'])->name('linelogin');
+Route::get('/callback', [LineLoginController::class, 'callback'])->name('callback');
+
+// ダッシュボード
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-     // プロフィール関連
+    // プロフィール関連
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profzile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -30,12 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/conditions', [ConditionController::class, 'index'])->name('conditions.index');
     Route::post('/conditions/store', [ConditionController::class, 'store'])->name('conditions.store');
 
-     // 体調記録の表示機能
+    // 体調記録の表示機能
     Route::get('/conditions/history', [ConditionController::class, 'history'])->name('conditions.history');
     Route::get('/conditions/graph', [ConditionController::class, 'graph'])->name('conditions.graph');
     Route::get('/conditions/cycle', [ConditionController::class, 'cycle'])->name('conditions.cycle');
 
-    // 追加: 編集と更新のルート
+    // 体調記録の編集と更新のルート
     Route::get('/conditions/{condition}/edit', [ConditionController::class, 'edit'])->name('conditions.edit');
     Route::put('/conditions/{condition}', [ConditionController::class, 'update'])->name('conditions.update');
     Route::delete('/conditions/{condition}', [ConditionController::class, 'destroy'])->name('conditions.destroy');
