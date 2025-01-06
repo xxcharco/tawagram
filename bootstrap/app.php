@@ -15,6 +15,16 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
+        
+        // CSRF除外設定
+        $middleware->validateCsrfTokens(except: [
+            'login',
+            'register',
+            '/login',
+            '/register',
+            'linelogin',
+            'line/callback'
+        ]);
 
         //
     })

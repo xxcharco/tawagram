@@ -20,19 +20,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'flash' => [
-                'message' => session('message')
-            ],
             'ziggy' => function () use ($request) {
+                // Ziggyクラスを使用せずにルート情報を共有
                 return [
                     'url' => $request->url(),
                     'port' => $request->getPort(),
                     'defaults' => [],
-                    'routes' => array_merge([
-                        'login' => '/login',
-                        'dashboard' => '/dashboard',
-                        // 他のルートも必要に応じて追加
-                    ], (array) $request->route()->getName()),
+                    'routes' => [],
                 ];
             },
         ]);

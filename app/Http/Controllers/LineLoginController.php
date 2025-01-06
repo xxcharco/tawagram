@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
  
 class LineLoginController extends Controller
 {
@@ -81,26 +82,32 @@ class LineLoginController extends Controller
     // ログイン後のページ表示
     public function callback(Request $request)
     {
-      $accessToken = $this->getAccessToken($request);
-      $profile = $this->getProfile($accessToken);
- 
-      // ユーザー情報あるか確認
-      $user=User::where('line_id', $profile->userId)->first();
- 
-      // あったらログイン
-      if($user) {
-        Auth::login($user);
-        return redirect('/home');
- 
-      // なければ登録してからログイン
-      }else {
-        $user=new User();
-        $user->provider='line';
-        $user->line_id=$profile->userId;
-        $user->name=$profile->displayName;
-        $user->save();
-        Auth::login($user);
-        return redirect('/home');
-      }
+        try {
+            $accessToken = $this->getAccessToken($request);
+            $profile = $this->getProfile($accessToken);
+
+            // ユーザー情報あるか確認
+            $user = User::where('line_id', $profile->userId)->first();
+
+            // なければ登録してからログイン
+            if (!$user) {
+                $user = new User();
+                $user->provider = 'line';
+                $user->line_id = $profile->userId;
+                $user->name = $profile->displayName;
+                $user->save();
+            }
+
+            Auth::login($user);
+            // セッションを再生成してセキュリティを向上
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('dashboard'));
+
+        } catch (\Exception $e) {
+            Log::error('LINEログインエラー: ' . $e->getMessage());
+            return redirect()->route('login')
+                ->with('error', 'ログイン処理中にエラーが発生しました');
+        }
     }
 }
